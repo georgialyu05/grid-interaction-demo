@@ -1,0 +1,159 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #f5f2ee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'Georgia', serif;
+}
+
+.grid-wrap {
+  position: relative;
+  display: inline-block;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(9, 104px);
+  grid-template-rows: repeat(5, 104px);
+  position: relative;
+  border-left: 1px solid rgba(0,0,0,0.12);
+  border-top: 1px solid rgba(0,0,0,0.12);
+}
+
+.cell {
+  position: relative;
+  width: 104px;
+  height: 104px;
+  border-right: 1px solid rgba(0,0,0,0.12);
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+  cursor: default;
+}
+
+.cell-num {
+  position: absolute;
+  top: 5px;
+  left: 7px;
+  font-size: 9px;
+  color: rgba(0,0,0,0.2);
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.cell.black { cursor: pointer; }
+
+/* Dark tile */
+.cell-fill {
+  position: absolute;
+  inset: 0;
+  background: #1c1c1c;
+  border-radius: 8px;
+  z-index: 3;
+}
+.cell-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 3px 3px 8px rgba(121, 121, 121, 0.45),
+    inset -2px -2px 6px rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+}
+
+/* Door animation */
+.cell.open .cell-fill {
+  animation: doorOpen 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+}
+.cell.closing .cell-fill {
+  animation: doorClose 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+}
+
+@keyframes doorOpen {
+  0%   { transform: perspective(300px) rotateY(0deg); }
+  100% { transform: perspective(300px) rotateY(-82deg); }
+}
+@keyframes doorClose {
+  0%   { transform: perspective(300px) rotateY(-82deg); }
+  100% { transform: perspective(300px) rotateY(0deg); }
+}
+
+/* Character image behind tile */
+.cell-img {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+}
+.cell-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 10px;
+}
+
+/* Speech bubble — liquid glass */
+.bubble {
+  position: absolute;
+  left: 96px;
+  top: 50%;
+  margin-top: -18px;
+  background: #ffffff80;
+  backdrop-filter: blur(24px) saturate(180%) brightness(1.2);
+  -webkit-backdrop-filter: blur(32px) saturate(180%) brightness(1.08);
+  border-radius: 99px;
+  padding: 8px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  line-height: 1.5;
+  color: rgba(0, 0, 0, 0.9);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.88) translateY(3px);
+  transition: opacity 0.22s 0.46s, transform 0.22s 0.46s;
+  z-index: 4;
+  box-shadow:
+    0 6px 40px rgba(0,0,0,0.05),
+    0 2px 8px rgba(0,0,0,0.02);
+}
+.cell.open .bubble {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+/* Hint label */
+.hint {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.7rem;
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(0,0,0,0.35);
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(5, 64px);
+    grid-template-rows: repeat(7, 64px);
+  }
+  .cell { width: 64px; height: 64px; }
+  .cell-fill { border-radius: 5px; }
+  .cell-img img { border-radius: 6px; }
+  .bubble { left: 58px; font-size: 10px; padding: 6px 10px; }
+}
